@@ -90,7 +90,7 @@ public class Menu {
                 break;
             case 3:
                 ar.ordenarAlu();
-                ar.ReporteAl();
+                ar.reporteAlu();
                 menuAlumnos();
                 break;
             case 4:

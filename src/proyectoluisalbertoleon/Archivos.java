@@ -201,16 +201,16 @@ public class Archivos {
                  JOptionPane.showMessageDialog(null,"ERROR!\nNo selecciono ninguna opcion.\n Porfavor selecione una opcion correta");
                  break;
          }
-     }
-///////////////////////////////////////////////////     
+     }    
     public void escribirReporA(PrintWriter linea,Alumnos ObA) {
-        String s1s1 = String.format("%-8s \t %-40s \t ",ObA.nControl,ObA.nombre,ObA.semestre);
+        String s1;
+        s1 = String.format("%-8s \t %-40s \t ",ObA.nControl,ObA.nombre,ObA.semestre);
         linea.println(s1);
     }
     
     //Se realiza el reporte
-    public void ReporteAl(){
-        Alumnos ObA = new Alumnos();
+    public void reporteAlu(){
+        Alumnos alum = new Alumnos();
         abrirAlu();
         if (!reportAlu.exists()){
             try {
@@ -224,8 +224,8 @@ public class Archivos {
                 linea.println("N.Control. \t Nombre.                                  \t Semestr.\n");
                 linea.println("-----------------------------------------------------------------------------------\n");
                 for(int i=0;i<nReg;i++){
-                    ObA = leerArc(archivo,i);
-                    EscribirRA(linea, ObA);
+                    alum = leerArc(archivo,i);
+                    escribirReporA(linea, alum);
                 }
                 linea.println("-----------------------------------------------------------------------------------\n");
                 linea.println("\n");
@@ -233,9 +233,7 @@ public class Archivos {
                 escribir.close();
                 archivo.close();
                 JOptionPane.showMessageDialog(null,
-                        "Se ha realizado el reporte de los alumnos correctamente.",
-                        "Reporte de Alumnos.",
-                        JOptionPane.INFORMATION_MESSAGE);
+                        "Se ha realizado el reporte de los alumnos correctamente.");
             } catch (IOException ex) {
                 Logger.getLogger(Archivos.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -250,18 +248,15 @@ public class Archivos {
                 linea.println("N.Control. \t Nombre.                                  \t Semestr.\n");
                 linea.println("-----------------------------------------------------------------------------------\n");
                 for(int i=0;i<nReg;i++){
-                    ObA = leerArc(archivo,i);
-                    EscribirRA(linea, ObA);
+                    alum = leerArc(archivo,i);
+                    escribirReporA(linea, alum);
                 }
                 linea.println("-----------------------------------------------------------------------------------\n");
                 linea.println("\n");
                 linea.close();
                 escribir.close();
                 archivo.close();
-                JOptionPane.showMessageDialog(null,
-                        "Se ha realizado el reporte de los alumnos correctamente.",
-                        "Reporte de Alumnos.",
-                        JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null,"Se ha realizado el reporte de los alumnos correctamente.");
             } catch (IOException ex) {
                 Logger.getLogger(Archivos.class.getName()).log(Level.SEVERE, null, ex);
             }
