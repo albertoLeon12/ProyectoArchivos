@@ -58,9 +58,9 @@ public class Archivos {
                 } catch (IOException ex) {
                     Logger.getLogger(Archivos.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                resp = JOptionPane.showInputDialog(null,"¿Desea ingresar otro Alumno? \t (s/n)\n");
+                resp = JOptionPane.showInputDialog(null,"¿Quiere ingresar otro Alumno? \t (s/n)\n");
             }while(resp.equals("s"));
-            JOptionPane.showMessageDialog(null,"Se han agrgado los datos correctamente al archivo "+rutaAlu);
+            JOptionPane.showMessageDialog(null,"Se han agregado correctamente los datos al archivo "+rutaAlu);
             archivo.close();
         } catch (IOException ex) {
             Logger.getLogger(Archivos.class.getName()).log(Level.SEVERE, null, ex);
@@ -74,101 +74,82 @@ public class Archivos {
             int nRegi = (int) (archivo.length()/tmRegA);
             for(int i = 1;i< nRegi;i++){
                 for(int com = 1;com <= (nRegi-i);com++){
-                    alum = LeerA(archivo,com-1);
-                    alumAux = LeerA(archivo,com);
+                    alum = leerArc(archivo,com-1);
+                    alumAux = leerArc(archivo,com);
                     if(alum.nControl.compareToIgnoreCase(alumAux.nControl) > 0){
-                        EscribirA2(archivo,alumAux,com-1);
-                        EscribirA2(archivo,alum,com);
+                        escribirBin(archivo,alumAux,com-1);
+                        escribirBin(archivo,alum,com);
                     }
                     archivo.seek(com*tmRegA);
                 }
-            }////
+            }
             archivo.close();
-            JOptionPane.showMessageDialog(null,
-                    "Se han ordenado los datos del archivo "
-                            +rutaAlu
-                            +" correctamente.",
-                    "Ordenamiento de Alumnos.",
-                    JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,"Se ordenaron los datos del archivo "+rutaAlu+" correctamente.");
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null,
-                    "Error: "+ex,
-                    "Ordenamiento de Alumnos.",
-                    JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,"Error: "+ex);
         }
     }
     
     //escribe los datos en el archivo bin 
-    public void EscribirA2(RandomAccessFile archivo,Alumnos ObA,int reg){
+    public void escribirBin(RandomAccessFile archivo,Alumnos alu,int reg){
         try {
             archivo.seek(reg*tmRegA);
-            archivo.writeUTF(ObA.nControl);
-            archivo.writeUTF(ObA.nombre);
-            archivo.writeByte(ObA.semestre);
+            archivo.writeUTF(alu.nControl);
+            archivo.writeUTF(alu.nombre);
+            archivo.writeByte(alu.semestre);
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null,
-                    "Error: "+ex,
-                    "EscribirA2.",
-                    JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,"Error: "+ex);
         }
     }
     
     //leer datos del archivo
-    public Alumnos LeerA(RandomAccessFile archivo, int reg){
-        Alumnos ObA = new Alumnos();
+    public Alumnos leerArc(RandomAccessFile archivo, int reg){
+        Alumnos alu = new Alumnos();
         try {
             archivo.seek(reg*tmRegA);
-            ObA.nControl = archivo.readUTF();
-            ObA.nombre = archivo.readUTF();
-            ObA.semestre = archivo.readByte();
+            alu.nControl = archivo.readUTF();
+            alu.nombre = archivo.readUTF();
+            alu.semestre = archivo.readByte();
         } catch (IOException ex) {
             Logger.getLogger(Archivos.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return ObA;
+        return alu;
     }
     
     //buscar un dato en el archivo bin
-    public int buscarA()  { 
+    public int buscaABin()  { //buscarA
         int pm;
         String buscar;
-        Alumnos ObA = new Alumnos();
+        Alumnos alu = new Alumnos();
         try {
             abriAlu();
-            buscar = JOptionPane.showInputDialog(null,
-                    "Ingresa el numero de control del Alumno.\n",
-                    "Buscando Alumno",
-                    JOptionPane.QUESTION_MESSAGE);
+            buscar = JOptionPane.showInputDialog(null,"Ingresa el numero de control del Alumno.\n");
             buscar = String.format("%-8s",buscar);
             int Li = 0, Ls = (int) (archivo.length()/tmRegA-1);
             do{
                 pm = (Li+Ls)/2;
                 archivo.seek(pm*tmRegA);
-                ObA = LeerA(archivo,pm);
-                if(ObA.nControl.compareTo(buscar)>0)
+                alu = leerArc(archivo,pm);
+                if(alu.nControl.compareTo(buscar)>0)
                     Ls=pm-1;
                 else
                     Li= pm+1;
-            }while(!ObA.nControl.equals(buscar) && Li<=Ls);
-            if(ObA.nControl.equals(buscar)){
-                //archivo.seek(pm*TmRegA);
+            }while(!alu.nControl.equals(buscar) && Li<=Ls);
+            if(alu.nControl.equals(buscar)){
                 JOptionPane.showMessageDialog(null,
                         "Se ha encontrado al Alumno."
-                                +"\nN.Control: "+ObA.nControl
-                                +"\nNombre: "+ObA.nombre
-                                +"\nSemestre: "+ObA.semestre,
+                                +"\nN.Control: "+alu.nControl
+                                +"\nNombre: "+alu.nombre
+                                +"\nSemestre: "+alu.semestre,
                         "Buscando Alumno.",
                         JOptionPane.INFORMATION_MESSAGE);
                 registro = pm*tmRegA;
-                al.setnControl(ObA.nControl);
-                al.setNombre(ObA.nombre);
-                al.setSemestre(ObA.semestre);
+                al.setnControl(alu.nControl);
+                al.setNombre(alu.nombre);
+                al.setSemestre(alu.semestre);
                 f=true;
             }else{
-                JOptionPane.showMessageDialog(null,
-                        "No se ha encontrado el Alumno."
-                                +"\nDatos no existentes.",
-                        "Buscando Alumno.",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null,"No se ha encontrado el Alumno."+"\nDatos no existentes.");
                 f=false;
             }   
             archivo.close();
@@ -178,66 +159,52 @@ public class Archivos {
         return registro;
     }
     public void modificarAm(){
-        buscarA();
+        buscaABin();
+        String[] arr =new String[4];
+        arr[0]="N.Control: "+al.getnControl();
+        arr[1]="Nombre: "+al.getNombre();
+        arr[2]="Semestre: "+al.getSemestre();
+        arr[3]="salir (No deseo modificar).";
+        String str = "Se ha encontrado al Alumno.\n";
+        
+        for(int i=0; i<arr.length;i++ ) {
+            str += (i+1)+") "+arr[i]+".\n";
+        }
         if(f==true){
-            int modificar = Integer.parseInt(JOptionPane.showInputDialog(null,
-                "Se ha encontrado al Alumno.\n"
-                        +"¿Que deseas modificar?"
-                        +"\n1) N.Control: "+al.getnControl()
-                        +"\n2) Nombre: "+al.getNombre()
-                        +"\n3) Semestre: "+al.getSemestre()
-                        +"\n4) salir (No deseo modificar).",
-                "Modificando datos del Alumno.",
-                JOptionPane.INFORMATION_MESSAGE));
+            int modificar = Integer.parseInt(JOptionPane.showInputDialog(null,str));
             modificarAo(modificar);
         }
     }
 
     public void modificarAo(int modificar){
-         Alumnos ObA = new Alumnos();
+         Alumnos alum = new Alumnos();
          abrirAlu();
          switch(modificar){
              case 1:
-                 ObA.nControl = JOptionPane.showInputDialog(null,
-                         "Ingresa el nuevo numero de control del Alumno.\n",
-                         "Modificando datos del Alumno.",
-                         JOptionPane.INFORMATION_MESSAGE);
-                 ObA.nControl = String.format("%-8s",ObA.nControl);
-                 al.setnControl(ObA.nControl);
-                 EscribirA2(archivo, ObA, nReg);
+                 alum.nControl = JOptionPane.showInputDialog(null,"Ingresa nuevo numero de control del Alumno.\n");
+                 alum.nControl = String.format("%-8s",alum.nControl);
+                 al.setnControl(alum.nControl);
+                 escribirBin(archivo, alum, nReg);
                  break;
              case 2:
-                 ObA.nombre = JOptionPane.showInputDialog(null,
-                         "Ingresa el nuevo nombre del Alumno.\n",
-                         "Modificando datos del Alumno.",
-                         JOptionPane.INFORMATION_MESSAGE);
-                 ObA.nombre = String.format("%-40s",ObA.nombre);
+                 alum.nombre = JOptionPane.showInputDialog(null,"Ingresa el nombre del nuevo Alumno.\n");
+                 alum.nombre = String.format("%-40s",alum.nombre);
                  break;
              case 3:
-                 ObA.semestre = Byte.parseByte(JOptionPane.showInputDialog(null,
-                         "Ingresa el nuevo semestre del Alumno.\n",
-                         "Modificando datos del Alumno.",
-                         JOptionPane.INFORMATION_MESSAGE));
+                 alum.semestre = Byte.parseByte(JOptionPane.showInputDialog(null,"Ingresa el semestre del Alumno.\n"));
                  break;
              case 4:
                  modificar = 4;
-                JOptionPane.showMessageDialog(null,
-                        "No se a modificado ningun registro.",
-                        "Modificando datos del Alumno.",
-                        JOptionPane.INFORMATION_MESSAGE);
+                 JOptionPane.showMessageDialog(null,"No se a modificado ningun registro.");
                  break;
              default:
-                 JOptionPane.showMessageDialog(null,
-                        "No selecciono ninguna opcion.\n" +
-                                "Porfavor selecione su opcion con un numero del 1-4",
-                        "ERROR!",
-                        JOptionPane.ERROR_MESSAGE);
+                 JOptionPane.showMessageDialog(null,"ERROR!\nNo selecciono ninguna opcion.\n Porfavor selecione una opcion correta");
                  break;
          }
      }
-     
-    public void EscribirRA(PrintWriter linea,Alumnos ObA) {
-        String s1;s1 = String.format("%-8s \t %-40s \t ",ObA.nControl,ObA.nombre,ObA.semestre);
+///////////////////////////////////////////////////     
+    public void escribirReporA(PrintWriter linea,Alumnos ObA) {
+        String s1s1 = String.format("%-8s \t %-40s \t ",ObA.nControl,ObA.nombre,ObA.semestre);
         linea.println(s1);
     }
     
@@ -257,7 +224,7 @@ public class Archivos {
                 linea.println("N.Control. \t Nombre.                                  \t Semestr.\n");
                 linea.println("-----------------------------------------------------------------------------------\n");
                 for(int i=0;i<nReg;i++){
-                    ObA = LeerA(archivo,i);
+                    ObA = leerArc(archivo,i);
                     EscribirRA(linea, ObA);
                 }
                 linea.println("-----------------------------------------------------------------------------------\n");
@@ -283,7 +250,7 @@ public class Archivos {
                 linea.println("N.Control. \t Nombre.                                  \t Semestr.\n");
                 linea.println("-----------------------------------------------------------------------------------\n");
                 for(int i=0;i<nReg;i++){
-                    ObA = LeerA(archivo,i);
+                    ObA = leerArc(archivo,i);
                     EscribirRA(linea, ObA);
                 }
                 linea.println("-----------------------------------------------------------------------------------\n");
@@ -587,7 +554,7 @@ public class Archivos {
                 JOptionPane.QUESTION_MESSAGE);
         if(resp.equals("si"))
             do{
-                buscarA();
+                buscaABin();
                 if(f=true){
                     do{
                         try {
@@ -596,21 +563,16 @@ public class Archivos {
                             archivo.seek(reg*tmRegM);
                             archivo.writeUTF(al.nombre);
                             archivo.writeUTF(mat.clave);
-                            resp = JOptionPane.showInputDialog(null,
-                                    "¿Desea inscribir otra materia? \t (si/no)\n",
-                                    "Inscripciones.",
-                                    JOptionPane.QUESTION_MESSAGE);
+                            resp = JOptionPane.showInputDialog(null,"¿Desea inscribir otra materia? \t (s/n)\n");
                         } catch (IOException ex) {
                             Logger.getLogger(Archivos.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                    }while(resp.equals("si"));
+                    }while(resp.equals("s"));
                     incripciones();
                 }else{
                     resp = JOptionPane.showInputDialog(null,
-                            "¿Desea buscar otro numero de control? \t (si/no)\n",
-                            "Inscripciones.",
-                            JOptionPane.QUESTION_MESSAGE);
+                            "¿Desea buscar otro numero de control? \t (si/no)\n");
                 }
-            }while(resp.equals("si"));
+            }while(resp.equals("s"));
     }
 }
